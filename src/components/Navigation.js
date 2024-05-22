@@ -1,44 +1,41 @@
+import React, { useState } from 'react'
 import { ethers } from 'ethers';
-import logo from '../assets/logo.svg';
 
-const Navigation = ({ account, setAccount }) => {
-    const connectHandler = async () => {
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        const account = ethers.utils.getAddress(accounts[0])
-        setAccount(account);
-    }
 
-    return (
-        <nav>
-            <ul className='nav__links'>
-                <li><a href="#">Buy</a></li>
-                <li><a href="#">Rent</a></li>
-                <li><a href="#">Sell</a></li>
-            </ul>
+const Navigation = ({acct, setAcct}) => {
 
-            <div className='nav__brand'>
-                <img src={logo} alt="Logo" />
-                <h1>Millow</h1>
-            </div>
+  const [connected, setConnected] = useState(false);
+  
+  const connectWallet = async () => {
+    const accounts = await window.ethereum.request({method: 'eth_requestAccounts'},[]);
+    const account = ethers.utils.getAddress(accounts[0]);
+    
+    setConnected(true);
+    setAcct(account);
+  }
+  const disconnectHandler = async() => {
+    setConnected(false);
+    setAcct(null);
+  }
 
-            {account ? (
-                <button
-                    type="button"
-                    className='nav__connect'
-                >
-                    {account.slice(0, 6) + '...' + account.slice(38, 42)}
-                </button>
-            ) : (
-                <button
-                    type="button"
-                    className='nav__connect'
-                    onClick={connectHandler}
-                >
-                    Connect
-                </button>
-            )}
-        </nav>
-    );
+  return (
+    <nav className='max-h-[150px] font-bold px-20 py-5 border-b-2 flex items-center justify-around'>
+        <div className='flex items-center gap-4'>
+            <img src="https://cdn-icons-png.freepik.com/512/585/585474.png" className='h-20 w-20' alt="logo" />
+            <h1 className='text-4xl'>Real Estate</h1>   
+        </div>
+        
+        <ul className='flex flex-row text-2xl gap-10'>
+            <li>Buy</li>
+            <li>Rent</li>
+            <li>Sell</li>
+        </ul>
+        <button className="bg-slate-200 px-4 py-3 rounded-xl" onClick={connected ? disconnectHandler : connectWallet}>
+            {connected ? "Disconnect Wallet" : "Connect Wallet"}
+        </button>
+          <h4 className="wal-add">{connected && `${acct.slice(0,6)}...${acct.slice(-4)}`}</h4>
+    </nav>
+  )
 }
 
 export default Navigation;
